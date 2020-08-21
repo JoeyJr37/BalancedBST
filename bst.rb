@@ -142,23 +142,14 @@ class Tree
     end
 
     def find_node(node,value)
-        # if node value == value, then return with that node
-        if node.value == value
-            node
-        elsif node.right_child != nil
+        if how_many_children(node) == 2
             if node.right_child.value == value
                 node.right_child
+            elsif node.left_child.value == value
+                node.left_child
             else
                 find_node(node.right_child, value)
             end
-        elsif node.left_child != nil
-            if node.left_child.value == value
-                node.left_child
-            else
-                find_node(node.left_child, value)
-            end
-        else
-            puts "I can't find it!"
         end
     end
 
