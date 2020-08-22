@@ -142,20 +142,11 @@ class Tree
     end
 
     def find_node(node,value)
-        if how_many_children(node) == 2
-            if node.right_child.value == value
-                node.right_child
-            elsif node.left_child.value == value
-                node.left_child
-            else
-                find_node(node.right_child, value)
-            end
-        end
+        #
     end
 
     def print_children(value)
         node = find_node(@root, value)
         p node
-        # p how_many_children(node)
     end
 end
