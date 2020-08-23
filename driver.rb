@@ -8,4 +8,6 @@ test = Tree.new([1,5,9,13,17,21,25,29,33,37])
 # test.find(17)
 # test.print_tree
 # test.find_parent(13)
+# test.delete(29)
+# test.print_tree
 

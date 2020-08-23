@@ -121,11 +121,29 @@ class Tree
         end
     end
 
-    def delete_node_with_one_child(parent_node, value)
-        if parent_node.left_child.value == value
-            parent_node.left_child = parent_node.left_child.left_child
-        elsif parent_node.right_child.value == value
-            parent_node.right_child = parent_node.right_child.left_child
+    def delete_node_with_one_child(value)
+        parent_node = find_parent(value)
+        node = find(value)
+        # puts "Parent Right Child: #{parent_node.right_child.value}"
+        # puts "Parent Left Child: #{parent_node.left_child.value}"
+        # puts "Node Right Child: #{node.right_child.value}"
+        # puts "Node Left Child: #{node.left_child.value}"
+        if parent_node.right_child.value == node.value
+            if node.right_child == nil
+                puts "#{node.value} was removed!"
+                parent_node.right_child = node.left_child
+            else
+                puts "#{node.value} was removed!"
+                parent_node.right_child = node.right_child
+            end
+        elsif parent_node.left_child.value == node.value
+            if node.right_child == nil
+                puts "#{node.value} was removed!"
+                parent_node.left_child = node.left_child
+            else
+                puts "#{node.value} was removed!"
+                parent_node.left_child = node.right_child
+            end
         else
             puts "Something went wrong!"
         end
@@ -144,7 +162,7 @@ class Tree
         elsif how_many_children(node) == 0
             delete_a_leaf(value)
         elsif how_many_children(node) == 1
-            delete_node_with_one_child(node, value)
+            delete_node_with_one_child(value)
         else
             delete_node_with_two_children(node, value)
         end
@@ -215,7 +233,7 @@ class Tree
         if node == nil
             puts "#{value} is not in this tree."
         else
-            p node
+            node
         end
     end
 
@@ -224,7 +242,7 @@ class Tree
         if node == nil
             puts "#{value} is not in this tree."
         else
-            p node
+            node
         end
     end
 
