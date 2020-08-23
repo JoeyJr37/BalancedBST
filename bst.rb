@@ -103,12 +103,22 @@ class Tree
         print_tree
     end
 
-    def find_parent_node(node, value)
-        
-    end
-
-    def delete_a_leaf(node)
-        node = nil
+    def delete_a_leaf(value)
+        parent_node = find_parent_node(@root, value)
+        if parent_node.right_child == nil
+            if parent_node.left_child.value == value
+                parent_node.left_child = nil
+                puts "#{value} has been removed!"
+            else
+                puts "Something went wrong!"
+            end
+        else
+            if parent_node.right_child.value == value
+                parent_node.right_child = nil
+            else
+                parent_node.left_child.value = nil
+            end
+        end
     end
 
     def delete_node_with_one_child(parent_node, value)
@@ -132,7 +142,7 @@ class Tree
         if node == nil
             puts "#{value} is not in this tree."
         elsif how_many_children(node) == 0
-            delete_a_leaf(node)
+            delete_a_leaf(value)
         elsif how_many_children(node) == 1
             delete_node_with_one_child(node, value)
         else
@@ -140,32 +150,45 @@ class Tree
         end
     end
 
-    # def find_parent_node(node,value)
-        def get_value(node,value)
-            if node.right_child.value == value || node.left_child.value == value
+    def find_parent_node(node, value)
+        if node == nil
+            nil
+        elsif how_many_children(node) == 2
+            if node.right_child.value == value
+                node
+            elsif node.left_child.value == value
                 node
             else
-                get_value(node.right_child, value) unless node.right_child == nil
-                get_value(node.left_child, value) unless node.left_child == nil
+                right_child = find_parent_node(node.right_child, value)
+                left_child = find_parent_node(node.left_child, value)
+                if right_child == nil
+                    if left_child == nil
+                        nil
+                    else
+                        left_child
+                    end
+                else
+                    right_child unless left_child == value
+                end
             end
-        end
-
-        def get_node(value)
-            node = get_value(@root, value)
-            if node == nil
-                puts "Nothing."
+        elsif how_many_children(node) == 1
+            if node.right_child == nil
+                if node.left_child.value == value
+                    node
+                else
+                    find_parent_node(node.left_child, value)
+                end
             else
-                node
+                if node.right_child.value == value
+                    node
+                else
+                    find_parent_node(node.right_child, value)
+                end
             end
+        else
+            nil
         end
-
-    #     elsif node.right_child.value == value || node.left_child.value == value
-    #         node
-    #     else
-    #     right_search_results = find_parent_node(node.right_child, value)
-    #     left_search_results = find_parent_node(node.left_child, value)
-
-    # end
+    end
 
     def find_node(node,value)
         if node == nil
@@ -179,11 +202,9 @@ class Tree
                 if left_child == nil
                     nil
                 else
-                    puts "Parent node is: #{node.value}"
                     left_child
                 end
             else
-                puts "Parent node is: #{node.value}"
                 right_child
             end
         end
