@@ -13,9 +13,7 @@ class Tree
     def initialize(array)
         @root = build_tree(array)
     end
-    # Write a #build_tree method which takes an array of data (e.g. [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]) 
-    # and turns it into a balanced binary tree full of Node objects appropriately placed (don’t forget to sort and remove duplicates!). 
-    # The #build_tree method should return the level-1 root node.
+
     def build_tree(array)
         if array == []
             nil
@@ -72,11 +70,6 @@ class Tree
     def print_tree
         internal_print_tree(@root, 1)
     end
-
-    # if the value is smaller than the root node, go to left child
-    # if the value is larger than the root node, go to right child
-    # if the value is smaller than the root node and the left child is nil then make the value the left child
-    # if the value is larger than the root node and the right child is nil then make the value the right child
 
     def internal_insert(node, value)
         if node.value == value
@@ -149,10 +142,31 @@ class Tree
         end
     end
 
+    def has_left_child?(node)
+        if node.left_child != nil
+            true
+        else
+            false
+        end
+    end
+
+    def find_left_most_value(node)
+        if has_left_child?(node)
+            find_left_most_value(node.left_child)
+        else
+            node
+        end
+    end
+
     def delete_node_with_two_children(node, value)
-        # node.right_child.left_child has_children? delete_node_with_two_children (node.right_child.left_child)
-        # once you get to final node.left_child save that value, then delete that leaf
-        # replace the value of original node with saved value of deleted leaf
+        node = find(value)
+        parent_node = find_parent(value)
+        right_sub_tree = node.right_child
+        left_most_node = find_left_most_value(right_sub_tree)
+        puts "#{node.value} has been removed!"
+        replacement_value = left_most_node.value
+        delete_a_leaf(left_most_node.value)
+        node.value = replacement_value
     end
 
     def delete(value)
@@ -208,6 +222,15 @@ class Tree
         end
     end
 
+    def find_parent(value)
+        node = find_parent_node(@root, value)
+        if node == nil
+            puts "#{value} is not in this tree."
+        else
+            node
+        end
+    end
+
     def find_node(node,value)
         if node == nil
             nil
@@ -236,16 +259,5 @@ class Tree
             node
         end
     end
-
-    def find_parent(value)
-        node = find_parent_node(@root, value)
-        if node == nil
-            puts "#{value} is not in this tree."
-        else
-            node
-        end
-    end
-
-
 
 end
