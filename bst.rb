@@ -56,11 +56,11 @@ class Tree
             nil
         else
             puts "Level #{i} Root: #{node.value}"
-            puts "Right_child: #{node.right_child.value}" unless node.right_child == nil 
             puts "Left_child: #{node.left_child.value}" unless node.left_child == nil
+            puts "Right_child: #{node.right_child.value}" unless node.right_child == nil 
             if how_many_children(node) != 0
-                internal_print_tree(node.right_child, i + 1)
                 internal_print_tree(node.left_child, i + 1)
+                internal_print_tree(node.right_child, i + 1)
             else
                 nil
             end
@@ -260,4 +260,41 @@ class Tree
         end
     end
 
+    def add_value_to_temp_array(temp_array, node)
+        if temp_array.include?(node) == false
+            temp_array.push(node)
+        else
+            nil
+        end
+
+        if node.left_child != nil
+            temp_array.push(node.left_child)
+            if node.right_child != nil
+                temp_array.push(node.right_child)
+            else
+                nil
+            end
+        elsif node.right_child != nil
+            temp_array.push(node.right_child)
+        else
+            nil
+        end
+
+        temp_array
+    end
+
+    def level_order
+        #=> [array of values: [21, 9, 33, 5, 17, 29, 37, 1, 13, 25] ]
+        level_array = []; temporary_array = []
+
+        # add node & its children to temporary array
+        add_value_to_temp_array(temporary_array, @root)
+
+        new_array = temporary_array.map do |element|
+            level_array.push(element.value) unless level_array.include?(element.value)
+            add_value_to_temp_array(temporary_array, element)
+        end
+
+        level_array
+    end
 end
