@@ -297,4 +297,14 @@ class Tree
 
         level_array
     end
+
+    def inorder
+        #  1. Traverse the left subtree, i.e., call Inorder(left-subtree)
+        inorder(node.left_child)
+        # 2. Visit the root.
+        node.value
+        # 3. Traverse the right subtree, i.e., call Inorder(right-subtree)
+        inorder(node.right_child)
+    end
+
 end
