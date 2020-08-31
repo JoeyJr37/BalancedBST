@@ -225,7 +225,8 @@ class Tree
     def find_parent(value)
         node = find_parent_node(@root, value)
         if node == nil
-            puts "#{value} is not in this tree."
+            # puts "#{value} is not in this tree."
+            nil
         else
             node
         end
@@ -298,13 +299,47 @@ class Tree
         level_array
     end
 
-    def inorder
-        #  1. Traverse the left subtree, i.e., call Inorder(left-subtree)
-        inorder(node.left_child)
-        # 2. Visit the root.
-        node.value
-        # 3. Traverse the right subtree, i.e., call Inorder(right-subtree)
-        inorder(node.right_child)
+    def internal_inorder(array, node)
+        # starting_node = find_left_most_value(node)
+        node_parent = find_parent(node.value)
+        puts "From internal_inorder. Node parent: #{node_parent}"
+        if node_parent.right_child == nil
+            array.push(node).push(node_parent)
+        else
+            node_right_side = node_parent.right_child 
+            array.push(node).push(node_parent).push(node_right_side)
+        end
+        puts "From internal_inorder. Array: #{array}"
+        array
     end
 
+    def inorder_2(array, node)
+        if has_left_child?(node) == true
+            inorder_2([], node.left_child)
+        else
+            array = internal_inorder([], node)
+            puts "From inorder_2. Array: #{array}"
+            array
+        end
+    end
+
+    def inorder_3(array, node)
+        if find_parent(node.value) == nil
+            nil
+        else
+            parent_node = find_parent(node.value)
+            if find_parent(parent_node.value) == nil
+                parent_node
+            else
+                grand_parent_node = find_parent(parent_node.value)
+                internal_inorder([], grand_parent_node)
+            end
+        end
+    end
+
+    def inorder
+        inorder_array = inorder_2([], @root)
+        inorder_array.push(inorder_3([], inorder_array.last))
+        # inorder_array
+    end
 end
