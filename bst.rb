@@ -300,17 +300,27 @@ class Tree
     end
 
     def internal_inorder(array, node)
-        # starting_node = find_left_most_value(node)
+        puts "From internal_inorder. Node is: #{node.value}"
         node_parent = find_parent(node.value)
-        puts "From internal_inorder. Node parent: #{node_parent}"
-        if node_parent.right_child == nil
-            array.push(node).push(node_parent)
+        if node_parent == nil
+            if node.right_child == nil
+                array.push(node)
+            else
+                node_right_side = node.right_child
+                array.push(node).push(node_right_side)
+            end
         else
-            node_right_side = node_parent.right_child 
-            array.push(node).push(node_parent).push(node_right_side)
+            puts "From internal_inorder. Node parent: #{node_parent.value}"
+            if node_parent.right_child == nil
+                array.push(node).push(node_parent)
+            else
+                node_right_side = node_parent.right_child 
+                array.push(node).push(node_parent).push(node_right_side)
+            end
+            array_values = array.map { |element| element.value}
+            puts "From internal_inorder. Array: #{array_values}"
+            array
         end
-        puts "From internal_inorder. Array: #{array}"
-        array
     end
 
     def inorder_2(array, node)
@@ -318,7 +328,8 @@ class Tree
             inorder_2([], node.left_child)
         else
             array = internal_inorder([], node)
-            puts "From inorder_2. Array: #{array}"
+            array_values = array.map { |element| element.value}
+            puts "From inorder_2. Array: #{array_values}"
             array
         end
     end
@@ -328,10 +339,12 @@ class Tree
             nil
         else
             parent_node = find_parent(node.value)
+            puts "From inorder_3. Parent node: #{parent_node.value}"
             if find_parent(parent_node.value) == nil
                 parent_node
             else
                 grand_parent_node = find_parent(parent_node.value)
+                puts "From inorder_3. Grand parent node: #{grand_parent_node.value}"
                 internal_inorder([], grand_parent_node)
             end
         end
@@ -340,6 +353,6 @@ class Tree
     def inorder
         inorder_array = inorder_2([], @root)
         inorder_array.push(inorder_3([], inorder_array.last))
-        # inorder_array
+        #inorder_array_values = inorder_array.map { |element| element.value}
     end
 end
