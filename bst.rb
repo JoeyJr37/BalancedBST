@@ -77,12 +77,14 @@ class Tree
         elsif node.value < value
             if node.right_child == nil
                 node.right_child = Node.new(value, nil, nil)
+                puts "#{value} added to the tree!"
             else
                 internal_insert(node.right_child, value)
             end
         elsif node.value > value
             if node.left_child == nil
                 node.left_child = Node.new(value, nil, nil)
+                puts "#{value} added to the tree!"
             else
                 internal_insert(node.left_child, value)
             end
@@ -93,7 +95,7 @@ class Tree
 
     def insert(value)
         internal_insert(@root, value)
-        print_tree
+        # print_tree
     end
 
     def delete_a_leaf(value)
@@ -108,8 +110,10 @@ class Tree
         else
             if parent_node.right_child.value == value
                 parent_node.right_child = nil
+                puts "#{value} has been removed!"
             else
                 parent_node.left_child.value = nil
+                puts "#{value} has been removed!"
             end
         end
     end
@@ -299,60 +303,137 @@ class Tree
         level_array
     end
 
+    def visit(array, node)
+        array.push(node) unless array.include?(node)
+    end
+
     def internal_inorder(array, node)
-        puts "From internal_inorder. Node is: #{node.value}"
-        node_parent = find_parent(node.value)
-        if node_parent == nil
-            if node.right_child == nil
-                array.push(node)
-            else
-                node_right_side = node.right_child
-                array.push(node).push(node_right_side)
-            end
-        else
-            puts "From internal_inorder. Node parent: #{node_parent.value}"
-            if node_parent.right_child == nil
-                array.push(node).push(node_parent)
-            else
-                node_right_side = node_parent.right_child 
-                array.push(node).push(node_parent).push(node_right_side)
-            end
-            array_values = array.map { |element| element.value}
-            puts "From internal_inorder. Array: #{array_values}"
-            array
-        end
-    end
-
-    def inorder_2(array, node)
-        if has_left_child?(node) == true
-            inorder_2([], node.left_child)
-        else
-            array = internal_inorder([], node)
-            array_values = array.map { |element| element.value}
-            puts "From inorder_2. Array: #{array_values}"
-            array
-        end
-    end
-
-    def inorder_3(array, node)
-        if find_parent(node.value) == nil
-            nil
-        else
-            parent_node = find_parent(node.value)
-            puts "From inorder_3. Parent node: #{parent_node.value}"
-            if find_parent(parent_node.value) == nil
-                parent_node
-            else
-                grand_parent_node = find_parent(parent_node.value)
-                puts "From inorder_3. Grand parent node: #{grand_parent_node.value}"
-                internal_inorder([], grand_parent_node)
-            end
-        end
+        has_left_child?(node) ? internal_inorder(array, node.left_child) : visit(array, node)
+        visit(array, node)
+        internal_inorder(array, node.right_child) unless node.right_child == nil
+        array
     end
 
     def inorder
-        inorder_array = inorder_2([], @root)
-        inorder_array.push(inorder_3([], inorder_array.last))
-        #inorder_array_values = inorder_array.map { |element| element.value}
+        temp_array = []
+        inorder_array = internal_inorder(temp_array, @root)
+        inorder_array_values = inorder_array.map { |element| element.value }
+        p inorder_array_values
     end
+
+    def internal_preorder(array, node)
+        visit(array, node)
+        has_left_child?(node) ? internal_preorder(array, node.left_child) : visit(array, node.right_child)
+        internal_preorder(array, node.right_child) unless node.right_child == nil
+        array
+    end
+
+    def preorder
+        temp_array = []
+        inorder_array = internal_preorder(temp_array, @root)
+        inorder_array_non_nil = inorder_array.select { |element| element != nil}
+        inorder_array_values = inorder_array_non_nil.map { |element| element.value }
+        p inorder_array_values
+    end
+    
+    def internal_postorder(array, node)
+        has_left_child?(node) ? internal_postorder(array, node.left_child) : visit(array, node)
+        internal_postorder(array, node.right_child) unless node.right_child == nil
+        visit(array, node)
+        array
+    end
+
+    def postorder 
+        temp_array = []
+        inorder_array = internal_postorder(temp_array, @root)
+        inorder_array_values = inorder_array.map{ |element| element.value }
+        p inorder_array_values
+    end
+
+    def add_height(height, node)
+        if how_many_children(node) == 1
+            if has_left_child?(node)
+                height += 1
+                add_height(height, node.left_child)
+            else
+                height
+            end
+        elsif how_many_children(node) == 2
+            if has_left_child?(node)
+                height += 1
+                add_height(height, node.left_child)
+            else
+                add_height(height, node.right_child)
+            end
+        elsif how_many_children(node) == 0
+            height
+        else
+            puts "Something went wrong!"
+        end
+    end
+
+    def height(value)
+        # height = number of edges along the longest path from a given node to a leaf node
+        left_height = 0 ; right_height = 0
+        node = find(value)
+        result = add_height(left_height, node)
+        result
+    end
+
+    def find_depth(depth, node, value)
+            depth += 1
+            if node == nil
+                nil
+            elsif node.value == value
+                depth
+            else
+                right_child = find_depth(depth, node.right_child, value)
+                left_child = find_depth(depth, node.left_child, value)
+            end
+    end
+
+    def depth(value)
+        depth = 0
+        # node = find(value)
+        result = find_depth(depth, @root, value)
+        p result
+    end
+
+    def balanced?
+        #A balanced tree is one where the difference between heights of left subtree and right subtree of every node is not more than 1.
+        tree_array = self.level_order
+        tree_nodes = tree_array.map { |value| find(value) }
+        # for each node, find the difference between the height of the left and right subtrees
+        tree_node_heights = tree_nodes.map do |node|
+            puts "For #{node.value}: "
+            puts "Right height is: #{height(node.right_child.value)}" unless node.right_child == nil
+            right_height = height(node.right_child.value) unless node.right_child == nil
+            puts "Left height is: #{height(node.left_child.value)}" unless node.left_child == nil
+            left_height = height(node.left_child.value) unless node.left_child == nil
+            if right_height != nil && left_height != nil
+                difference = left_height - right_height
+            elsif right_height == nil
+                difference = left_height
+            elsif left_height == nil
+                difference = right_height
+            else
+                puts "Something went wrong."
+            end
+            difference
+        end
+        non_nil_values = tree_node_heights.select { |values| values != nil}
+        if non_nil_values.any? { |value| value > 1 } == false
+            p true
+        else
+            p false
+        end
+    end
+
+    def rebalance
+        array_of_values = level_order()
+        @root = build_tree(array_of_values)
+        @root
+    end
+
+
 end

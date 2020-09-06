@@ -17,7 +17,7 @@ Write #inorder, #preorder, and #postorder methods that returns an array of value
 
 Write a #height method which accepts a node and returns its height. Height is defined as the number of edges in longest path from a given node to a leaf node.
 
-Write a #depth method which accepts a node and returns the depth(number of levels) beneath the node.
+Write a #depth method which accepts a node and returns its depth. Depth is defined as the number of edges in path from a given node to the tree’s root node.
 
 Write a #balanced? method which checks if the tree is balanced. A balanced tree is one where the difference between heights of left subtree and right subtree of every node is not more than 1.
 
